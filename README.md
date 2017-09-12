@@ -4,6 +4,8 @@ Tool for shutting down/starting up Google Cloud Engine instances based on tags f
 
 **Current version: v0.0.0**
 
+Concept lovingly stolen and adapted from (https://github.com/lbn/gce-bedtime)[gce-bedtime].
+
 ## Getting Started
 
 ### Installing
