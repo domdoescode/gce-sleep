@@ -160,16 +160,7 @@ func main() {
 	for _, ruleset := range activeRules {
 		now := time.Now().In(ruleset.Timezone)
 
-		shouldBeRunning := true
-		if ruleset.StartTime.Hour() <= now.Hour() && ruleset.StopTime.Hour() >= now.Hour() {
-			if ruleset.StartTime.Hour() == now.Hour() && ruleset.StartTime.Minute() > now.Minute() {
-				shouldBeRunning = false
-			}
-
-			if ruleset.StopTime.Hour() == now.Hour() && ruleset.StopTime.Minute() < now.Minute() {
-				shouldBeRunning = false
-			}
-		}
+		shouldBeRunning := shouldBeRunning(now, ruleset.StartTime, ruleset.StopTime)
 
 		for _, instance := range ruleset.Instances {
 			if shouldBeRunning && instance.Status == "TERMINATED" {
@@ -185,4 +176,18 @@ func main() {
 			}
 		}
 	}
+}
+
+func shouldBeRunning(now, startTime, stopTime time.Time) bool {
+	if startTime.Hour() <= now.Hour() && stopTime.Hour() >= now.Hour() {
+		if startTime.Hour() == now.Hour() && startTime.Minute() > now.Minute() {
+			return false
+		}
+
+		if stopTime.Hour() == now.Hour() && stopTime.Minute() < now.Minute() {
+			return false
+		}
+	}
+
+	return true
 }
