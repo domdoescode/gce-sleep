@@ -14,4 +14,25 @@ Download a version from the (https://github.com/domudall/gce-sleep/releases)[rel
 
 ### Running
 
-:D???
+#### Config
+
+```hcl
+project "gce-sleep-testing" {
+	zones = [
+		"europe-west1-c"
+	]
+}
+
+ruleset "weekly-sleep" {
+	startTime = "06:00"
+	stopTime = "19:00"
+	timezone = "Europe/London"
+	days = [
+		1,
+		2,
+		3,
+		4,
+		5
+	]
+}
+```
