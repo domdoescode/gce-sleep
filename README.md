@@ -4,13 +4,13 @@ Tool for shutting down/starting up Google Cloud Engine instances based on tags f
 
 **Current version: v0.0.0**
 
-Concept lovingly stolen and adapted from (https://github.com/lbn/gce-bedtime)[gce-bedtime].
+Concept lovingly stolen and adapted from [gce-bedtime](https://github.com/lbn/gce-bedtime).
 
 ## Getting Started
 
 ### Installing
 
-Download a version from the (https://github.com/domudall/gce-sleep/releases)[releases] page on Github, and place it into your local bin folder.
+Download a version from the [releases](https://github.com/domudall/gce-sleep/releases) page on Github, and place it into your local bin folder.
 
 ### Running
 
