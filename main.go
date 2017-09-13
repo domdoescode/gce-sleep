@@ -93,8 +93,9 @@ func newRuleset(r RawRuleset) (rs Ruleset, err error) {
 }
 
 func main() {
-	var configLocation string
+	var configLocation, labelName string
 	flag.StringVar(&configLocation, "c", "/etc/gce-sleep.conf", "Location of the gce-sleep config file")
+	flag.StringVar(&labelName, "l", "gce-sleep", "Label for filtering instances to determine if gce-sleep is active")
 	flag.Parse()
 
 	configContent, err := ioutil.ReadFile(configLocation)
@@ -132,11 +133,11 @@ func main() {
 
 	for projectName, project := range config.Project {
 		for _, zoneName := range project.Zones {
-			instancesReq := computeService.Instances.List(projectName, zoneName).Filter("labels.gce-sleep eq on")
+			instancesReq := computeService.Instances.List(projectName, zoneName).Filter(fmt.Sprintf("labels.%s eq on", labelName))
 			if err := instancesReq.Pages(ctx, func(page *compute.InstanceList) error {
 				for _, instance := range page.Items {
 					for _, metadata := range instance.Metadata.Items {
-						if metadata.Key == "gce-sleep-type" {
+						if metadata.Key == "gce-sleep-group" {
 							actionableInstances := activeRules[*metadata.Value]
 							actionableInstances.Instances = append(actionableInstances.Instances, Instance{
 								Project: projectName,
