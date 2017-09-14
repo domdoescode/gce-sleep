@@ -209,7 +209,7 @@ var RootCmd = &cobra.Command{
 						log.Println(fmt.Sprintf("Instance %q stopping", instance.Name))
 					}
 				} else {
-					logPrintlnVerbose(fmt.Sprintf("Instance %q does not meet critera (gt %s, lt %s)", instance.Name, ruleset.rawRuleset.StartTime, ruleset.rawRuleset.StopTime))
+					logPrintlnVerbose(fmt.Sprintf("Instance %q does not meet critera (%s <=, %s >=)", instance.Name, ruleset.rawRuleset.StartTime, ruleset.rawRuleset.StopTime))
 				}
 			}
 		}
@@ -219,14 +219,16 @@ var RootCmd = &cobra.Command{
 }
 
 func shouldBeRunning(now, startTime, stopTime time.Time) bool {
-	if startTime.Hour() <= now.Hour() && stopTime.Hour() >= now.Hour() {
-		if startTime.Hour() == now.Hour() && startTime.Minute() > now.Minute() {
-			return false
-		}
+	if startTime.Hour() > now.Hour() || stopTime.Hour() < now.Hour() {
+		return false
+	}
 
-		if stopTime.Hour() == now.Hour() && stopTime.Minute() < now.Minute() {
-			return false
-		}
+	if startTime.Hour() == now.Hour() && startTime.Minute() > now.Minute() {
+		return false
+	}
+
+	if stopTime.Hour() == now.Hour() && stopTime.Minute() < now.Minute() {
+		return false
 	}
 
 	return true
