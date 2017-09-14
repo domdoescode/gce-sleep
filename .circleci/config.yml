@@ -10,7 +10,25 @@ jobs:
 
       - run: go get github.com/Masterminds/glide
       - run: go get github.com/golang/dep/cmd/dep
+      - restore_cache:
+          keys:
+            - dep-cache-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+            - dep-cache-{{ .Branch }}
+            - dep-cache
       - run: dep ensure
+      - save_cache:
+          key: dep-cache-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+          paths:
+            - vendor
+      - save_cache:
+          key: dep-cache-{{ .Branch }}
+          paths:
+            - vendor
+      - save_cache:
+          key: dep-cache
+          paths:
+            - vendor
+
       - run: go test $(glide nv)
 
   deploy:
@@ -22,7 +40,25 @@ jobs:
       - checkout
 
       - run: go get github.com/golang/dep/cmd/dep
+      - restore_cache:
+          keys:
+            - dep-cache-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+            - dep-cache-{{ .Branch }}
+            - dep-cache
       - run: dep ensure
+      - save_cache:
+          key: dep-cache-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
+          paths:
+            - vendor
+      - save_cache:
+          key: dep-cache-{{ .Branch }}
+          paths:
+            - vendor
+      - save_cache:
+          key: dep-cache
+          paths:
+            - vendor
+
       - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
