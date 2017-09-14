@@ -209,7 +209,7 @@ var RootCmd = &cobra.Command{
 						log.Println(fmt.Sprintf("Instance %q stopping", instance.Name))
 					}
 				} else {
-					logPrintlnVerbose(fmt.Sprintf("Instance %q does not meet critera (%s <=, %s >=)", instance.Name, ruleset.rawRuleset.StartTime, ruleset.rawRuleset.StopTime))
+					logPrintlnVerbose(fmt.Sprintf("Instance %q does not meet criteria (%s <=, %s >=)", instance.Name, ruleset.rawRuleset.StartTime, ruleset.rawRuleset.StopTime))
 				}
 			}
 		}
