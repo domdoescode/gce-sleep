@@ -6,14 +6,12 @@ var (
 	labelName      string
 
 	version string
-	tag     string
 	commit  string
 	date    string
 )
 
-func Setup(v, t, c, d string) {
+func Setup(v, c, d string) {
 	version = v
-	tag = t
 	commit = c
 	date = d
 
