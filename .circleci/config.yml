@@ -31,5 +31,5 @@ workflows:
       - deploy:
           requires:
             - build
-          # filters:
-          #   tags: /v[0-9]+(\.[0-9]+)*(-.*)*/
+          filters:
+            tags: /v[0-9]+(\.[0-9]+)*(-.*)*/
