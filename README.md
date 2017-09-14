@@ -1,4 +1,4 @@
-# gce-sleep
+# gce-sleep [![CircleCI](https://circleci.com/gh/domudall/gce-sleep.svg?style=svg)](https://circleci.com/gh/domudall/gce-sleep)
 
 Tool for shutting down/starting up Google Cloud Engine instances based on tags for savings costs when not in use.
 
