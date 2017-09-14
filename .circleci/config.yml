@@ -13,8 +13,17 @@ jobs:
       - run: dep ensure
       - run: go test $(glide nv)
 
-deployment:
-  release:
-    tag: /v[0-9]+(\.[0-9]+)*(-.*)*/
-    commands:
-      - curl -sL https://git.io/goreleaser | bash
+  deploy:
+    requires:
+      - build
+    filters:
+      tags: /v[0-9]+(\.[0-9]+)*(-.*)*/
+      commands:
+        - curl -sL https://git.io/goreleaser | bash
+
+workflows:
+  version: 2
+  build_and_deploy:
+    jobs:
+      - build
+      - deploy
