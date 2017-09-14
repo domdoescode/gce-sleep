@@ -47,6 +47,7 @@ type Project struct {
 }
 
 func newRuleset(r RawRuleset) (rs Ruleset, err error) {
+	logPrintlnVerbose("Creating new ruleset")
 	timezone, locationErr := time.LoadLocation(r.Timezone)
 	if locationErr != nil {
 		err = multierror.Append(err, errors.New("timezone is not valid"))
@@ -96,6 +97,12 @@ var RootCmd = &cobra.Command{
 	Use:   "gce-sleep",
 	Short: "gce-sleep is a tool for shutting down/starting up Google Cloud Engine instances based on tags for savings costs when not in use.",
 	Run: func(cmd *cobra.Command, args []string) {
+		logPrintlnVerbose("Starting gce-sleep")
+
+		now := time.Now()
+
+		logPrintlnVerbose("Basing time on:", now)
+
 		configContent, err := ioutil.ReadFile(configLocation)
 		if err != nil {
 			log.Fatal(err)
@@ -117,6 +124,8 @@ var RootCmd = &cobra.Command{
 			}
 		}
 
+		logPrintlnVerbose("Active rulesets:", activeRules)
+
 		ctx := context.Background()
 
 		client, err := google.DefaultClient(ctx, compute.CloudPlatformScope)
@@ -130,12 +139,18 @@ var RootCmd = &cobra.Command{
 		}
 
 		for projectName, project := range config.Project {
+			logPrintlnVerbose(fmt.Sprintf("Checking project %q", projectName))
+
 			for _, zoneName := range project.Zones {
+				logPrintlnVerbose(fmt.Sprintf("Checking zone %q", zoneName))
+
 				instancesReq := computeService.Instances.List(projectName, zoneName).Filter(fmt.Sprintf("labels.%s eq on", labelName))
 				if err := instancesReq.Pages(ctx, func(page *compute.InstanceList) error {
 					for _, instance := range page.Items {
 						for _, metadata := range instance.Metadata.Items {
 							if metadata.Key == "gce-sleep-group" {
+								logPrintlnVerbose(fmt.Sprintf("Instance %q qualifies", instance.Name))
+
 								actionableInstances := activeRules[*metadata.Value]
 								actionableInstances.Instances = append(actionableInstances.Instances, Instance{
 									Project: projectName,
@@ -156,9 +171,9 @@ var RootCmd = &cobra.Command{
 		}
 
 		for _, ruleset := range activeRules {
-			now := time.Now().In(ruleset.Timezone)
+			nowTimezone := now.In(ruleset.Timezone)
 
-			shouldBeRunning := shouldBeRunning(now, ruleset.StartTime, ruleset.StopTime)
+			shouldBeRunning := shouldBeRunning(nowTimezone, ruleset.StartTime, ruleset.StopTime)
 
 			for _, instance := range ruleset.Instances {
 				if shouldBeRunning && instance.Status == "TERMINATED" {
@@ -174,6 +189,8 @@ var RootCmd = &cobra.Command{
 				}
 			}
 		}
+
+		logPrintlnVerbose("Stopping gce-sleep")
 	},
 }
 
