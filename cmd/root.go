@@ -26,6 +26,8 @@ type Ruleset struct {
 	Timezone  *time.Location
 	Days      []int
 	Instances []Instance
+
+	rawRuleset RawRuleset
 }
 
 type RawRuleset struct {
@@ -48,6 +50,9 @@ type Project struct {
 
 func newRuleset(r RawRuleset) (rs Ruleset, err error) {
 	logPrintlnVerbose("Creating new ruleset")
+
+	rs.rawRuleset = r
+
 	timezone, locationErr := time.LoadLocation(r.Timezone)
 	if locationErr != nil {
 		err = multierror.Append(err, errors.New("timezone is not valid"))
@@ -204,7 +209,7 @@ var RootCmd = &cobra.Command{
 						log.Println(fmt.Sprintf("Instance %q stopping", instance.Name))
 					}
 				} else {
-					logPrintlnVerbose(fmt.Sprintf("Instance %q ", instance.Name))
+					logPrintlnVerbose(fmt.Sprintf("Instance %q does not meet critera (gt %s, lt %s)", instance.Name, ruleset.rawRuleset.StartTime, ruleset.rawRuleset.StopTime))
 				}
 			}
 		}
