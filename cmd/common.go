@@ -11,8 +11,11 @@ var (
 	date    string
 )
 
-func Setup(v string) {
+func Setup(v, t, c, d string) {
 	version = v
+	tag = t
+	commit = c
+	date = d
 
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "toggles verbose output")
 	RootCmd.PersistentFlags().StringVarP(&configLocation, "config", "c", "/etc/gce-sleep.conf", "gce-sleep config file")
