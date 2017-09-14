@@ -21,6 +21,8 @@ jobs:
     steps:
       - checkout
 
+      - run: go get github.com/golang/dep/cmd/dep
+      - run: dep ensure
       - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
