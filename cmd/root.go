@@ -182,14 +182,20 @@ var RootCmd = &cobra.Command{
 			for _, instance := range ruleset.Instances {
 				if shouldBeRunning && instance.Status == "TERMINATED" {
 					call := computeService.Instances.Start(instance.Project, instance.Zone, instance.Name)
-					call.Do()
-
-					log.Println(fmt.Sprintf("Instance %q starting", instance.Name))
+					_, err := call.Do()
+					if err != nil {
+						log.Fatal(err)
+					} else {
+						log.Println(fmt.Sprintf("Instance %q starting", instance.Name))
+					}
 				} else if !shouldBeRunning && instance.Status == "RUNNING" {
 					call := computeService.Instances.Stop(instance.Project, instance.Zone, instance.Name)
-					call.Do()
-
-					log.Println(fmt.Sprintf("Instance %q stopping", instance.Name))
+					_, err := call.Do()
+					if err != nil {
+						log.Fatal(err)
+					} else {
+						log.Println(fmt.Sprintf("Instance %q stopping", instance.Name))
+					}
 				}
 			}
 		}
