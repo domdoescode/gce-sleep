@@ -14,6 +14,7 @@ var (
 	date    string
 )
 
+// Setup passes through ldflags from goreleaser, adds child commands, and sets up flag configuration
 func Setup(v, c, d string) {
 	version = v
 	commit = c
@@ -22,6 +23,8 @@ func Setup(v, c, d string) {
 	RootCmd.PersistentFlags().BoolVarP(&verbose, "verbose", "v", false, "toggles verbose output")
 	RootCmd.PersistentFlags().StringVarP(&configLocation, "config", "c", "/etc/gce-sleep.conf", "gce-sleep config file")
 	RootCmd.PersistentFlags().StringVarP(&labelName, "label", "l", "gce-sleep", "label for filtering instances")
+
+	RootCmd.AddCommand(versionCmd)
 }
 
 func logPrintlnVerbose(v ...interface{}) {

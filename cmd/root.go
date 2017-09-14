@@ -15,40 +15,40 @@ import (
 	"google.golang.org/api/compute/v1"
 )
 
-type Config struct {
-	Project map[string]Project    `hcl:"project"`
-	Ruleset map[string]RawRuleset `hcl:"ruleset"`
+type projectConfig struct {
+	Project map[string]gceProject       `hcl:"project"`
+	Ruleset map[string]rawConfigRuleset `hcl:"ruleset"`
 }
 
-type Ruleset struct {
+type configRuleset struct {
 	StartTime time.Time
 	StopTime  time.Time
 	Timezone  *time.Location
 	Days      []int
-	Instances []Instance
+	Instances []gceInstance
 
-	rawRuleset RawRuleset
+	rawRuleset rawConfigRuleset
 }
 
-type RawRuleset struct {
+type rawConfigRuleset struct {
 	StartTime string `hcl:"startTime"`
 	StopTime  string `hcl:"stopTime"`
 	Timezone  string `hcl:"timezone"`
 	Days      []int  `hcl:"days"`
 }
 
-type Instance struct {
+type gceInstance struct {
 	Name    string
 	Project string
 	Zone    string
 	Status  string
 }
 
-type Project struct {
+type gceProject struct {
 	Zones []string `hcl:"zones"`
 }
 
-func newRuleset(r RawRuleset) (rs Ruleset, err error) {
+func newRuleset(r rawConfigRuleset) (rs configRuleset, err error) {
 	logPrintlnVerbose("Creating new ruleset")
 
 	rs.rawRuleset = r
@@ -98,6 +98,8 @@ func newRuleset(r RawRuleset) (rs Ruleset, err error) {
 	return
 }
 
+// RootCmd is gce-sleep's root command.
+// Every other command attached to RootCmd is a child command to it.
 var RootCmd = &cobra.Command{
 	Use:   "gce-sleep",
 	Short: "gce-sleep is a tool for shutting down/starting up Google Cloud Engine instances based on tags for savings costs when not in use.",
@@ -113,13 +115,13 @@ var RootCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
-		var config Config
+		var config projectConfig
 		err = hcl.Unmarshal(configContent, &config)
 		if err != nil {
 			log.Fatal(err)
 		}
 
-		activeRules := make(map[string]Ruleset)
+		activeRules := make(map[string]configRuleset)
 		for index, rawRuleset := range config.Ruleset {
 			ruleset, err := newRuleset(rawRuleset)
 			if err != nil {
@@ -161,7 +163,7 @@ var RootCmd = &cobra.Command{
 								logPrintlnVerbose(fmt.Sprintf("Instance %q qualifies", instance.Name))
 
 								actionableInstances := activeRules[*metadata.Value]
-								actionableInstances.Instances = append(actionableInstances.Instances, Instance{
+								actionableInstances.Instances = append(actionableInstances.Instances, gceInstance{
 									Project: projectName,
 									Zone:    zoneName,
 									Name:    instance.Name,

@@ -14,7 +14,6 @@ var (
 
 func main() {
 	cmd.Setup(version, commit, date)
-	cmd.RootCmd.AddCommand(cmd.VersionCmd)
 
 	if err := cmd.RootCmd.Execute(); err != nil {
 		log.Fatal(err)
