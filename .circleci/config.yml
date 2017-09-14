@@ -10,5 +10,4 @@ jobs:
 
       - run: go get github.com/Masterminds/glide
       - run: go get github.com/golang/dep/cmd/dep
-      - run: go test .
-      - run: go test ./cmd/...
+      - run: go test $(glide nv)
