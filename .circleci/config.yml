@@ -19,6 +19,8 @@ jobs:
 
     working_directory: /go/src/github.com/domudall/gce-sleep
     steps:
+      - checkout
+
       - run: curl -sL https://git.io/goreleaser | bash
 
 workflows:
