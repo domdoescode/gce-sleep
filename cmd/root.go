@@ -174,13 +174,18 @@ var RootCmd = &cobra.Command{
 			}
 		}
 
-		for _, ruleset := range activeRules {
+		for rulesetName, ruleset := range activeRules {
 			nowTimezone := now.In(ruleset.Timezone)
-
 			shouldBeRunning := shouldBeRunning(nowTimezone, ruleset.StartTime, ruleset.StopTime)
 
+			logPrintlnVerbose(fmt.Sprintf("Total %d instances to be evaluated in ruleset %q", len(ruleset.Instances), rulesetName))
+
 			for _, instance := range ruleset.Instances {
+				logPrintlnVerbose(fmt.Sprintf("Evaluating instance %q", instance.Name))
+
 				if shouldBeRunning && instance.Status == "TERMINATED" {
+					logPrintlnVerbose(fmt.Sprintf("Instance %q currently stopped, starting", instance.Name))
+
 					call := computeService.Instances.Start(instance.Project, instance.Zone, instance.Name)
 					_, err := call.Do()
 					if err != nil {
@@ -189,6 +194,8 @@ var RootCmd = &cobra.Command{
 						log.Println(fmt.Sprintf("Instance %q starting", instance.Name))
 					}
 				} else if !shouldBeRunning && instance.Status == "RUNNING" {
+					logPrintlnVerbose(fmt.Sprintf("Instance %q currently starting, stopped", instance.Name))
+
 					call := computeService.Instances.Stop(instance.Project, instance.Zone, instance.Name)
 					_, err := call.Do()
 					if err != nil {
@@ -196,6 +203,8 @@ var RootCmd = &cobra.Command{
 					} else {
 						log.Println(fmt.Sprintf("Instance %q stopping", instance.Name))
 					}
+				} else {
+					logPrintlnVerbose(fmt.Sprintf("Instance %q ", instance.Name))
 				}
 			}
 		}
