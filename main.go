@@ -6,8 +6,10 @@ import (
 	"github.com/domudall/gce-sleep/cmd"
 )
 
+var version = "master"
+
 func main() {
-	cmd.Setup()
+	cmd.Setup(version)
 	cmd.RootCmd.AddCommand(cmd.VersionCmd)
 
 	if err := cmd.RootCmd.Execute(); err != nil {
