@@ -138,15 +138,19 @@ var RootCmd = &cobra.Command{
 			log.Fatal(err)
 		}
 
+		filter := fmt.Sprintf("labels.%s eq on", labelName)
+		logPrintlnVerbose(fmt.Sprintf("Filter defined as: %q", filter))
+
 		for projectName, project := range config.Project {
 			logPrintlnVerbose(fmt.Sprintf("Checking project %q", projectName))
 
 			for _, zoneName := range project.Zones {
 				logPrintlnVerbose(fmt.Sprintf("Checking zone %q", zoneName))
 
-				instancesReq := computeService.Instances.List(projectName, zoneName).Filter(fmt.Sprintf("labels.%s eq on", labelName))
+				instancesReq := computeService.Instances.List(projectName, zoneName).Filter(filter)
 				if err := instancesReq.Pages(ctx, func(page *compute.InstanceList) error {
 					for _, instance := range page.Items {
+						logPrintlnVerbose(fmt.Sprintf("Checking instance %q", instance.Name))
 						for _, metadata := range instance.Metadata.Items {
 							if metadata.Key == "gce-sleep-group" {
 								logPrintlnVerbose(fmt.Sprintf("Instance %q qualifies", instance.Name))
