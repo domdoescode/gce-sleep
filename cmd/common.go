@@ -6,6 +6,9 @@ var (
 	labelName      string
 
 	version string
+	tag     string
+	commit  string
+	date    string
 )
 
 func Setup(v string) {
