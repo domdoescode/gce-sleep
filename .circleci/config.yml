@@ -14,8 +14,7 @@ jobs:
       - run: go test $(glide nv)
 
 deployment:
-  tag:
+  release:
     tag: /v[0-9]+(\.[0-9]+)*(-.*)*/
-    owner: user
     commands:
       - curl -sL https://git.io/goreleaser | bash
