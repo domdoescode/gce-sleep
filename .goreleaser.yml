@@ -5,3 +5,14 @@ builds:
       - linux
     goarch:
       - amd64
+
+fpm:
+  vendor: Dom Udall
+  homepage: https://domudall.co.uk/
+  maintainer: Dom Udall <me@domudall.co.uk>
+  description: TODO
+  license: MIT
+  formats:
+    - deb
+  files:
+    "deb/etc/gce-sleep.conf": "/etc/gce-sleep.conf"
