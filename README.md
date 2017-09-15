@@ -3,7 +3,7 @@
 
 Tool for shutting down/starting up Google Cloud Engine instances based on tags for savings costs when not in use.
 
-**Current version: v0.0.2**
+**Current version: v0.0.10**
 
 Concept lovingly stolen and adapted from [gce-bedtime](https://github.com/lbn/gce-bedtime).
 
