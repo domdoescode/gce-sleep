@@ -40,7 +40,7 @@ jobs:
       - checkout
 
       - run: sudo apt-get install ruby ruby-dev rubygems build-essential
-      - run: gem install --no-ri --no-rdoc fpm
+      - run: sudo gem install --no-ri --no-rdoc fpm
 
       - run: go get github.com/golang/dep/cmd/dep
       - restore_cache:
