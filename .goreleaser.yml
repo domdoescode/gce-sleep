@@ -10,7 +10,7 @@ fpm:
   vendor: Dom Udall
   homepage: https://domudall.co.uk/
   maintainer: Dom Udall <me@domudall.co.uk>
-  description: TODO
+  description: Tool for shutting down/starting up Google Cloud Engine instances based on tags for savings costs when not in use.
   license: MIT
   formats:
     - deb
