@@ -1,15 +1,18 @@
+defaults: &defaults
+  working_directory: /go/src/github.com/domudall/gce-sleep
+  docker:
+    - image: circleci/golang:1.8
+
 version: 2
 jobs:
   build:
-    docker:
-      - image: circleci/golang:1.8
-
-    working_directory: /go/src/github.com/domudall/gce-sleep
+    <<: *defaults
     steps:
       - checkout
 
       - run: go get github.com/Masterminds/glide
       - run: go get github.com/golang/dep/cmd/dep
+
       - restore_cache:
           keys:
             - dep-cache-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
@@ -31,36 +34,19 @@ jobs:
 
       - run: go test $(glide nv)
 
+      - persist_to_workspace:
+          root: /go/src/github.com/domudall
+          paths:
+            - gce-sleep
+
   deploy:
-    docker:
-      - image: circleci/golang:1.8
-
-    working_directory: /go/src/github.com/domudall/gce-sleep
+    <<: *defaults
     steps:
-      - checkout
-
       - run: sudo apt-get install ruby ruby-dev rubygems build-essential
       - run: sudo gem install --no-ri --no-rdoc fpm
 
-      - run: go get github.com/golang/dep/cmd/dep
-      - restore_cache:
-          keys:
-            - dep-cache-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
-            - dep-cache-{{ .Branch }}
-            - dep-cache
-      - run: dep ensure
-      - save_cache:
-          key: dep-cache-{{ .Branch }}-{{ checksum "Gopkg.lock" }}
-          paths:
-            - vendor
-      - save_cache:
-          key: dep-cache-{{ .Branch }}
-          paths:
-            - vendor
-      - save_cache:
-          key: dep-cache
-          paths:
-            - vendor
+      - attach_workspace:
+          at: /go/src/github.com/domudall/
 
       - run: curl -sL https://git.io/goreleaser | bash
 
