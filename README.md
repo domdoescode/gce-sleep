@@ -13,9 +13,15 @@ Concept lovingly stolen and adapted from [gce-bedtime](https://github.com/lbn/gc
 
 Download a version from the [releases](https://github.com/domudall/gce-sleep/releases) page on Github, and place it into your local bin folder.
 
+### Tagging
+
+`gce-sleep` iterates through all the instances for a particular project (defined in the config below) for the tag: `gce-sleep-group` to determine if an instance needs to be woken or not. Tag cloud instances accordingly.
+
 ### Running
 
 #### Config
+
+Default config location: `/etc/gce-sleep.conf`
 
 ```hcl
 project "gce-sleep-testing" {
