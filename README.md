@@ -21,7 +21,7 @@ Download a version from the [releases](https://github.com/domudall/gce-sleep/rel
 
 #### Config
 
-Config lives on the scheduling host (`/etc/gce-sleep.conf`):
+Default config location: `/etc/gce-sleep.conf`
 
 ```hcl
 project "gce-sleep-testing" {
